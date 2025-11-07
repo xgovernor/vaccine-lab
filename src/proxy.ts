@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect unauthenticated users to login, except if already on login page
-  if (!session && pathname !== AUTH_LOGIN_PAGE_URL) {
+  if (!session && !AUTH_URLS.includes(pathname)) {
     const loginUrl = new URL(AUTH_LOGIN_PAGE_URL, request.url);
     loginUrl.searchParams.set("callback_url", pathname);
     return NextResponse.redirect(loginUrl);
