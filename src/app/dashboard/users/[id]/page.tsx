@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, use } from "react";
+import UpdatePasswordForm from "@/components/forms/update-password-form";
+import UpdateUserRoleForm, { TRole } from "@/components/forms/update-user-role-form";
+import { authClient } from "@/lib/auth-client";
 
 // Mock data - replace with actual data fetching
 const getUserData = (id: string) => {
@@ -64,29 +67,15 @@ const getRoleBadge = (role: string) => {
 };
 
 const PageUserDetails = ({ params }: { params: Promise<{ id: string }> }) => {
+  // const result = await getUserDetails({ id: "user-123" });
   const { id } = use(params);
   const user = getUserData(id);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  const handlePasswordChange = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsChangingPassword(true);
+  const session = authClient.useSession();
 
-    // Simulate API call
-    setTimeout(() => {
-      alert("Password changed successfully!");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setIsChangingPassword(false);
-    }, 1500);
-  };
+  if (!session.data?.user) {
+    return null;
+  }
 
   return (
     <div className="p-3 sm:p-4 md:p-14 space-y-4 md:space-y-6">
@@ -136,23 +125,23 @@ const PageUserDetails = ({ params }: { params: Promise<{ id: string }> }) => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-1">
                   <p className="text-xs sm:text-sm text-muted-foreground">Full Name</p>
-                  <p className="font-medium text-sm sm:text-base">{user.name}</p>
+                  <p className="font-medium text-sm sm:text-base">{session.data?.user.name}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs sm:text-sm text-muted-foreground">Role</p>
-                  <div>{getRoleBadge(user.role)}</div>
+                  <div>{getRoleBadge(session.data?.user.role || "Unknown")}</div>
                 </div>
                 <div className="space-y-1 sm:col-span-2">
                   <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
                     <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
                     Email Address
                   </p>
-                  <p className="font-medium text-sm sm:text-base break-all">{user.email}</p>
+                  <p className="font-medium text-sm sm:text-base break-all">{session.data?.user.email}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs sm:text-sm text-muted-foreground">Email Status</p>
                   <div className="flex items-center gap-2">
-                    {user.emailVerified ? (
+                    {session.data?.user.emailVerified ? (
                       <>
                         <CheckCircle className="w-4 h-4 text-green-500" />
                         <span className="text-sm text-green-600 font-medium">Verified</span>
@@ -176,152 +165,11 @@ const PageUserDetails = ({ params }: { params: Promise<{ id: string }> }) => {
           </Card>
 
           {/* Change Password */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <Lock className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-                Change Password
-              </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
-                Update your password to keep your account secure
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handlePasswordChange} className="space-y-4">
-                {/* Current Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="current-password" className="text-xs sm:text-sm">
-                    Current Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="current-password"
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="Enter current password"
-                      required
-                      className="pr-10 text-sm"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    >
-                      {showCurrentPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* New Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="new-password" className="text-xs sm:text-sm">
-                    New Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="new-password"
-                      type={showNewPassword ? "text" : "password"}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="Enter new password"
-                      required
-                      minLength={8}
-                      className="pr-10 text-sm"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                    >
-                      {showNewPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Password must be at least 8 characters long
-                  </p>
-                </div>
-
-                {/* Confirm Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-xs sm:text-sm">
-                    Confirm New Password
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="confirm-password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm new password"
-                      required
-                      className="pr-10 text-sm"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  </div>
-                  {confirmPassword && newPassword !== confirmPassword && (
-                    <p className="text-xs text-red-500">Passwords do not match</p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  className="w-full sm:w-auto text-sm"
-                  disabled={
-                    isChangingPassword ||
-                    !currentPassword ||
-                    !newPassword ||
-                    !confirmPassword ||
-                    newPassword !== confirmPassword
-                  }
-                >
-                  {isChangingPassword ? "Changing Password..." : "Change Password"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+          <UpdatePasswordForm />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-4 md:space-y-6">
-          {/* Account Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base sm:text-lg">Account Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-center">
-                <Badge className="bg-green-500 hover:bg-green-600">
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  Active
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Account Details */}
           <Card>
@@ -336,7 +184,7 @@ const PageUserDetails = ({ params }: { params: Promise<{ id: string }> }) => {
                 <div className="min-w-0">
                   <p className="text-xs sm:text-sm text-muted-foreground">Created</p>
                   <p className="font-medium text-sm sm:text-base">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(session.data?.user.createdAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -348,12 +196,14 @@ const PageUserDetails = ({ params }: { params: Promise<{ id: string }> }) => {
                 <div className="min-w-0">
                   <p className="text-xs sm:text-sm text-muted-foreground">Last Updated</p>
                   <p className="font-medium text-sm sm:text-base">
-                    {new Date(user.updatedAt).toLocaleDateString()}
+                    {new Date(session.data?.user.updatedAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          <UpdateUserRoleForm currentRole={session.data?.user.role as TRole | undefined} userId={id} />
 
           {/* Quick Actions */}
           <Card>
@@ -378,16 +228,8 @@ const PageUserDetails = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
       </div>
 
-      {/* Back Button */}
-      <div className="flex justify-start pt-2 md:pt-4  ">
-        <Link href="/dashboard/users">
-          <Button variant="ghost" size="sm" className="text-sm lg:mb-7  mb-10">
-            ← Back to Staff List
-          </Button>
-        </Link>
-      </div>
     </div>
-    
+
   );
 };
 
