@@ -26,36 +26,39 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { createNewUser } from "@/actions/auth/create-new-user";
+import { createNewVaccine } from "@/actions/vaccine";
 
 // --- 1. Zod Schema (Kono Change Nai) ---
 const vaccineFormSchema = z.object({
-  code: z.string().optional(),
+  code: z.string(),
   name: z.string().min(2, "Name is required."),
-  manufacturer: z.string().optional(),
-  antigen: z.string().optional(),
-  series_name: z.string().optional(),
-  dose_count: z.coerce.number().int().positive().optional(),
-  dose_volume: z.string().optional(),
-  dose_unit: z.string().optional(),
-  route: z.string().optional(),
-  site_examples: z.string().optional(),
-  min_age_months: z.coerce.number().int().positive().optional(),
-  notes: z.string().optional(),
+  manufacturer: z.string(),
+  antigen: z.string(),
+  series_name: z.string(),
+  dose_count: z.coerce.number().int().positive(),
+  dose_volume: z.string(),
+  dose_unit: z.string(),
+  route: z.string(),
+  site_examples: z.string(),
+  min_age_months: z.coerce.number().int().positive(),
+  notes: z.string(),
 });
 
 type VaccineFormValues = z.infer<typeof vaccineFormSchema>;
 
 // --- Helper: Red & White Theme (UPDATED) ---
 // Ekhon shudhu focus hole red dekhabe
-const labelClass = "text-sm font-medium text-gray-700 dark:text-gray-300"; 
+const labelClass = "text-sm font-medium text-gray-700 dark:text-gray-300";
 const inputClass =
-  "bg-white focus-visible:ring-red-500 dark:bg-gray-900 dark:focus-visible:ring-red-300"; 
+  "bg-white focus-visible:ring-red-500 dark:bg-gray-900 dark:focus-visible:ring-red-300";
 const buttonClass =
   "bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 dark:text-white cursor-pointer"; // Button stays red (CTA)
 
 // --- 2. Main Form Component ---
 export default function VaccineEntryForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<VaccineFormValues>({
     resolver: zodResolver(vaccineFormSchema) as any,
@@ -71,13 +74,26 @@ export default function VaccineEntryForm() {
     },
   });
 
-  async function onSubmit(data: VaccineFormValues) {
-    setIsSubmitting(true);
-    console.log("Form Data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    form.reset();
-  }
+
+  const onSubmit = async (data: VaccineFormValues) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log("Form Data  ", data);
+      const result = await createNewVaccine(data);
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     // --- UPDATED BORDER ---
@@ -344,12 +360,12 @@ export default function VaccineEntryForm() {
             <Button
               type="submit"
               className={`${buttonClass} w-full md:w-auto px-10 py-6 text-lg font-semibold cursor-pointer`}
-              disabled={isSubmitting}
+              disabled={isLoading}
             >
-              {isSubmitting ? (
+              {isLoading ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : null}
-              {isSubmitting ? "Saving..." : "Save Vaccine Profile"}
+              {isLoading ? "Saving..." : "Save Vaccine Profile"}
             </Button>
           </div>
         </form>
