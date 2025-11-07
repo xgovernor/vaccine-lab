@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +44,8 @@ const mockVaccinations = [
     vaccinator_id: "user_001",
     dose_number: 1,
     nextDueAt: "2024-12-15",
-    notes: "First dose of COVID-19 vaccine series. Please bring ID and insurance card.",
+    notes:
+      "First dose of COVID-19 vaccine series. Please bring ID and insurance card.",
 
     // Patient table fields (referenced by patient_id)
     patient: {
@@ -77,10 +84,11 @@ const mockVaccinations = [
       dose_volume: "0.3",
       dose_unit: "ml",
       route: "IM (Intramuscular)",
-      site_examples: "Deltoid muscle (upper arm), Anterolateral thigh (for infants)",
+      site_examples:
+        "Deltoid muscle (upper arm), Anterolateral thigh (for infants)",
       min_age_months: 6,
       notes:
-        "Store at -80°C to -60°C. Once thawed, may be stored at 2°C to 8°C for up to 10 weeks.",
+        "Store at -80°C to -60°C. Once thawed, may be stoblack at 2°C to 8°C for up to 10 weeks.",
     },
 
     // Facility table fields (referenced by facility_id)
@@ -128,7 +136,7 @@ const mockVaccinations = [
     vaccinator_id: "user_002",
     dose_number: 1,
     nextDueAt: "2025-11-20",
-    notes: "Annual flu vaccination. No special preparation required.",
+    notes: "Annual flu vaccination. No special preparation requiblack.",
 
     // Patient table fields
     patient: {
@@ -189,7 +197,14 @@ const mockVaccinations = [
       phone: "+8801987654800",
       email: "info@citymedical.com",
       capacity: "80 patients/day",
-      weekdays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      weekdays: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ],
       hours: "8:00 AM - 6:00 PM",
       notes: "Specialized medical clinic with immunization services",
     },
@@ -218,7 +233,8 @@ const mockVaccinations = [
     vaccinator_id: "user_003",
     dose_number: 3,
     nextDueAt: "2025-05-18",
-    notes: "Booster dose. Please wait 15 minutes after vaccination for observation.",
+    notes:
+      "Booster dose. Please wait 15 minutes after vaccination for observation.",
 
     // Patient table fields
     patient: {
@@ -259,7 +275,8 @@ const mockVaccinations = [
       route: "IM (Intramuscular)",
       site_examples: "Deltoid muscle (upper arm)",
       min_age_months: 18,
-      notes: "Store at -50°C to -15°C. Once thawed, may be stored at 2°C to 8°C for up to 30 days.",
+      notes:
+        "Store at -50°C to -15°C. Once thawed, may be stoblack at 2°C to 8°C for up to 30 days.",
     },
 
     // Facility table fields
@@ -278,7 +295,15 @@ const mockVaccinations = [
       phone: "+8801555123400",
       email: "appointments@regionalvax.com",
       capacity: "200 patients/day",
-      weekdays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      weekdays: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
       hours: "7:00 AM - 9:00 PM",
       notes: "Large-scale vaccination center with extended hours",
     },
@@ -301,7 +326,8 @@ type VaccinationRecord = (typeof mockVaccinations)[0];
 const PageVerify = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [vaccinationId, setVaccinationId] = useState("");
-  const [searchResult, setSearchResult] = useState<VaccinationRecord | null>(null);
+  const [searchResult, setSearchResult] =
+    useState<VaccinationRecord | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState("");
 
@@ -342,37 +368,41 @@ const PageVerify = () => {
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
           <div className="flex justify-center mb-4">
-            <div className="p-4 bg-red-100 rounded-full">
-              <Calendar className="w-12 h-12 text-red-600" />
+            <div className="p-4 bg-black-100 rounded-full">
+              <Calendar className="w-12 h-12 text-black-600" />
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-red-600 mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-black-600 mb-4">
             Verify Vaccination Record
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Enter your phone number and vaccination ID to verify your vaccination appointment
-            details
+            Enter your phone number and vaccination ID to verify your vaccination
+            appointment details
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
           {/* Search Form */}
-          <Card className="border-red-100">
+          <Card className="border-black-100">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl text-red-600">
+              <CardTitle className="flex items-center gap-2 text-xl text-black-600">
                 <Search className="w-5 h-5" />
                 Search Vaccination Record
               </CardTitle>
               <CardDescription>
-                Enter your phone number and vaccination ID to verify your vaccination appointment
+                Enter your phone number and vaccination ID to verify your
+                vaccination appointment
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber" className="flex items-center gap-2 text-base">
-                    <Phone className="w-4 h-4 text-red-500" />
+                  <Label
+                    htmlFor="phoneNumber"
+                    className="flex items-center gap-2 text-base"
+                  >
+                    <Phone className="w-4 h-4 text-black-500" />
                     Phone Number
                   </Label>
                   <Input
@@ -381,12 +411,15 @@ const PageVerify = () => {
                     placeholder="Enter your phone number (e.g., +1234567890)"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="border-red-200 focus:border-red-400 text-lg"
+                    className="border-black-200 focus:border-black-400 text-lg"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="vaccinationId" className="flex items-center gap-2 text-base">
-                    <Hash className="w-4 h-4 text-red-500" />
+                  <Label
+                    htmlFor="vaccinationId"
+                    className="flex items-center gap-2 text-base"
+                  >
+                    <Hash className="w-4 h-4 text-black-500" />
                     Vaccination ID
                   </Label>
                   <Input
@@ -395,7 +428,7 @@ const PageVerify = () => {
                     placeholder="Enter vaccination ID (e.g., vacc_001)"
                     value={vaccinationId}
                     onChange={(e) => setVaccinationId(e.target.value)}
-                    className="border-red-200 focus:border-red-400 text-lg"
+                    className="border-black-200 focus:border-black-400 text-lg"
                     onKeyPress={(e) => {
                       if (e.key === "Enter" && phoneNumber && vaccinationId) {
                         handleSearch();
@@ -405,20 +438,13 @@ const PageVerify = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                <Button
-                  onClick={handleSearch}
-                  disabled={!phoneNumber || !vaccinationId || isSearching}
-                  className="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white"
-                  size="lg"
-                >
-                  <Search className="w-4 h-4 mr-2" />
-                  {isSearching ? "Searching..." : "Verify Vaccination"}
-                </Button>
+             
+              <div className="flex flex-col sm:flex-row gap-6 pt-4 justify-center">
+                
                 <Button
                   onClick={handleReset}
                   variant="outline"
-                  className="w-full sm:w-auto border-red-400 text-red-500 hover:bg-red-50"
+                  className="w-full  sm:w-auto border-black-400 text-black-500 hover:bg-black-50"
                   size="lg"
                 >
                   Clear
@@ -427,13 +453,15 @@ const PageVerify = () => {
 
               {/* Sample Vaccination IDs */}
               <div className="pt-4 border-t">
-                <p className="text-sm text-muted-foreground mb-2">Sample vaccination IDs to try:</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Sample vaccination IDs to try:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {mockVaccinations.map((vaccination) => (
                     <Badge
                       key={vaccination.id}
                       variant="outline"
-                      className="cursor-pointer border-red-300 text-red-600 hover:bg-red-50"
+                      className="cursor-pointer border-black-300 text-black-600 hover:bg-black-50"
                       onClick={() => {
                         setVaccinationId(vaccination.id);
                         setPhoneNumber(vaccination.patient.phone);
@@ -449,13 +477,15 @@ const PageVerify = () => {
 
           {/* Error Message */}
           {error && (
-            <Card className="border-red-300 bg-red-50">
+            <Card className="border-black-300 bg-black-50">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-black-600 shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-red-900">Vaccination Record Not Found</h3>
-                    <p className="text-sm text-red-700 mt-1">{error}</p>
+                    <h3 className="font-semibold text-black-900">
+                      Vaccination Record Not Found
+                    </h3>
+                    <p className="text-sm text-black-700 mt-1">{error}</p>
                   </div>
                 </div>
               </CardContent>
@@ -468,15 +498,16 @@ const PageVerify = () => {
               <Separator />
 
               {/* Vaccination Header */}
-              <Card className="border-red-100 bg-linear-to-br from-red-50 to-white">
+              <Card className="border-black-100 bg-linear-to-br from-black-50 to-white">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <CardTitle className="text-2xl text-red-600 mb-2">
+                      <CardTitle className="text-2xl text-black-600 mb-2">
                         Vaccination ID: {searchResult.id}
                       </CardTitle>
                       <CardDescription className="text-base">
-                        Patient: {searchResult.patient.name} • Phone: {searchResult.patient.phone}
+                        Patient: {searchResult.patient.name} • Phone:{" "}
+                        {searchResult.patient.phone}
                       </CardDescription>
                     </div>
                     <Badge className="bg-green-500 hover:bg-green-600 text-white shrink-0">
@@ -488,23 +519,27 @@ const PageVerify = () => {
               </Card>
 
               {/* Vaccination Information */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <Calendar className="w-5 h-5" />
                     Vaccination Details
                   </CardTitle>
-                  <CardDescription>Your vaccination appointment information</CardDescription>
+                  <CardDescription>
+                    Your vaccination appointment information
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-red-500" />
+                        <Calendar className="w-4 h-4 text-black-500" />
                         Vaccination Date
                       </p>
                       <p className="font-medium text-base">
-                        {new Date(searchResult.vaccination_date).toLocaleDateString("en-US", {
+                        {new Date(
+                          searchResult.vaccination_date
+                        ).toLocaleDateString("en-US", {
                           weekday: "long",
                           year: "numeric",
                           month: "long",
@@ -514,52 +549,65 @@ const PageVerify = () => {
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Hash className="w-4 h-4 text-red-500" />
+                        <Hash className="w-4 h-4 text-black-500" />
                         Dose Number
                       </p>
-                      <p className="font-medium text-base">Dose {searchResult.dose_number}</p>
+                      <p className="font-medium text-base">
+                        Dose {searchResult.dose_number}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Syringe className="w-4 h-4 text-red-500" />
+                        <Syringe className="w-4 h-4 text-black-500" />
                         Vaccine Name
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccine.name}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.name}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <User className="w-4 h-4 text-red-500" />
+                        <User className="w-4 h-4 text-black-500" />
                         Vaccinator
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccinator.name}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccinator.name}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Hash className="w-4 h-4 text-red-500" />
+                        <Hash className="w-4 h-4 text-black-500" />
                         Vaccine Code
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccine.code}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.code}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-red-500" />
+                        <Shield className="w-4 h-4 text-black-500" />
                         Series Name
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccine.series_name}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.series_name}
+                      </p>
                     </div>
                     {searchResult.nextDueAt && (
                       <div className="space-y-1 sm:col-span-2">
                         <p className="text-sm text-muted-foreground flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-red-500" />
+                          <Clock className="w-4 h-4 text-black-500" />
                           Next Dose Due
                         </p>
                         <p className="font-medium text-base">
-                          {new Date(searchResult.nextDueAt).toLocaleDateString("en-US", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {new Date(searchResult.nextDueAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            }
+                          )}
                         </p>
                       </div>
                     )}
@@ -568,58 +616,77 @@ const PageVerify = () => {
               </Card>
 
               {/* Vaccine Information */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <Syringe className="w-5 h-5" />
                     Vaccine Information
                   </CardTitle>
-                  <CardDescription>Details about the vaccine administered</CardDescription>
+                  <CardDescription>
+                    Details about the vaccine administeblack
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-red-500" />
+                        <Building2 className="w-4 h-4 text-black-500" />
                         Manufacturer
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccine.manufacturer}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.manufacturer}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-red-500" />
+                        <Shield className="w-4 h-4 text-black-500" />
                         Antigen (Target Disease)
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccine.antigen}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.antigen}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Syringe className="w-4 h-4 text-red-500" />
+                        <Syringe className="w-4 h-4 text-black-500" />
                         Route of Administration
                       </p>
-                      <p className="font-medium text-base">{searchResult.vaccine.route}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Dose Volume</p>
                       <p className="font-medium text-base">
-                        {searchResult.vaccine.dose_volume} {searchResult.vaccine.dose_unit}
+                        {searchResult.vaccine.route}
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Minimum Age</p>
+                      <p className="text-sm text-muted-foreground">
+                        Dose Volume
+                      </p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.dose_volume}{" "}
+                        {searchResult.vaccine.dose_unit}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-muted-foreground">
+                        Minimum Age
+                      </p>
                       <p className="font-medium text-base">
                         {searchResult.vaccine.min_age_months} months
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Total Doses in Series</p>
+                      <p className="text-sm text-muted-foreground">
+                        Total Doses in Series
+                      </p>
                       <p className="font-medium text-base">
                         {searchResult.vaccine.dose_count} dose(s)
                       </p>
                     </div>
                     <div className="space-y-1 sm:col-span-2">
-                      <p className="text-sm text-muted-foreground">Injection Site Examples</p>
-                      <p className="font-medium text-base">{searchResult.vaccine.site_examples}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Injection Site Examples
+                      </p>
+                      <p className="font-medium text-base">
+                        {searchResult.vaccine.site_examples}
+                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -627,87 +694,113 @@ const PageVerify = () => {
 
               {/* Vaccine Storage & Handling */}
               {searchResult.vaccine.notes && (
-                <Card className="border-red-100">
+                <Card className="border-black-100">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                    <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                       <FileText className="w-5 h-5" />
                       Vaccine Storage & Handling
                     </CardTitle>
-                    <CardDescription>Important storage and handling information</CardDescription>
+                    <CardDescription>
+                      Important storage and handling information
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm leading-relaxed">{searchResult.vaccine.notes}</p>
+                    <p className="text-sm leading-relaxed">
+                      {searchResult.vaccine.notes}
+                    </p>
                   </CardContent>
                 </Card>
               )}
 
               {/* Facility Information */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <MapPin className="w-5 h-5" />
                     Facility Details
                   </CardTitle>
-                  <CardDescription>Where the vaccination took place</CardDescription>
+                  <CardDescription>
+                    Where the vaccination took place
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-red-500" />
+                        <Building2 className="w-4 h-4 text-black-500" />
                         Facility Name
                       </p>
-                      <p className="font-medium text-base">{searchResult.facility.title}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.facility.title}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-red-500" />
+                        <Shield className="w-4 h-4 text-black-500" />
                         Status
                       </p>
-                      <p className="font-medium text-base">{searchResult.facility.status}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.facility.status}
+                      </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-red-500" />
+                        <MapPin className="w-4 h-4 text-black-500" />
                         Full Address
                       </p>
                       <p className="font-medium text-base">
-                        {searchResult.facility.address}, {searchResult.facility.city},{" "}
-                        {searchResult.facility.state} {searchResult.facility.zip},{" "}
+                        {searchResult.facility.address},{" "}
+                        {searchResult.facility.city},{" "}
+                        {searchResult.facility.state}{" "}
+                        {searchResult.facility.zip},{" "}
                         {searchResult.facility.country}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-red-500" />
+                        <Phone className="w-4 h-4 text-black-500" />
                         Contact Information
                       </p>
-                      <p className="font-medium text-base">{searchResult.facility.phone}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.facility.phone}
+                      </p>
                       <p className="font-medium text-sm text-gray-600">
                         {searchResult.facility.email}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-red-500" />
+                        <Clock className="w-4 h-4 text-black-500" />
                         Operating Hours
                       </p>
-                      <p className="font-medium text-base">{searchResult.facility.hours}</p>
+                      <p className="font-medium text-base">
+                        {searchResult.facility.hours}
+                      </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Daily Capacity</p>
-                      <p className="font-medium text-base">{searchResult.facility.capacity}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Daily Capacity
+                      </p>
+                      <p className="font-medium text-base">
+                        {searchResult.facility.capacity}
+                      </p>
                     </div>
                     <div className="space-y-1 sm:col-span-2">
-                      <p className="text-sm text-muted-foreground">Working Days</p>
+                      <p className="text-sm text-muted-foreground">
+                        Working Days
+                      </p>
                       <p className="font-medium text-base">
                         {searchResult.facility.weekdays.join(", ")}
                       </p>
                     </div>
                     {searchResult.facility.notes && (
                       <div className="space-y-1 sm:col-span-2">
-                        <p className="text-sm text-muted-foreground">Facility Notes</p>
-                        <p className="font-medium text-base">{searchResult.facility.notes}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Facility Notes
+                        </p>
+                        <p className="font-medium text-base">
+                          {searchResult.facility.notes}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -715,9 +808,9 @@ const PageVerify = () => {
               </Card>
 
               {/* Patient & Vaccinator Information */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <User className="w-5 h-5" />
                     Patient & Provider Information
                   </CardTitle>
@@ -725,16 +818,26 @@ const PageVerify = () => {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-900">Patient Information</h4>
+                      <h4 className="font-semibold text-gray-900">
+                        Patient Information
+                      </h4>
                       <div className="space-y-2">
                         <div>
-                          <p className="text-sm text-muted-foreground">Full Name</p>
-                          <p className="font-medium">{searchResult.patient.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Full Name
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.name}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Date of Birth</p>
+                          <p className="text-sm text-muted-foreground">
+                            Date of Birth
+                          </p>
                           <p className="font-medium">
-                            {new Date(searchResult.patient.dob).toLocaleDateString("en-US", {
+                            {new Date(
+                              searchResult.patient.dob
+                            ).toLocaleDateString("en-US", {
                               year: "numeric",
                               month: "long",
                               day: "numeric",
@@ -742,62 +845,108 @@ const PageVerify = () => {
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Gender</p>
-                          <p className="font-medium">{searchResult.patient.gender}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Gender
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.gender}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Contact Information</p>
-                          <p className="font-medium">{searchResult.patient.phone}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Contact Information
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.phone}
+                          </p>
                           <p className="font-medium text-sm text-gray-600">
                             {searchResult.patient.email}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Father's Name</p>
-                          <p className="font-medium">{searchResult.patient.fatherName}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Mother's Name</p>
-                          <p className="font-medium">{searchResult.patient.motherName}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Address</p>
+                          <p className="text-sm text-muted-foreground">
+                            Father's Name
+                          </p>
                           <p className="font-medium">
-                            {searchResult.patient.address}, {searchResult.patient.city},{" "}
-                            {searchResult.patient.state} {searchResult.patient.zip},{" "}
+                            {searchResult.patient.fatherName}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Mother's Name
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.motherName}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Address
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.address},{" "}
+                            {searchResult.patient.city},{" "}
+                            {searchResult.patient.state}{" "}
+                            {searchResult.patient.zip},{" "}
                             {searchResult.patient.country}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">National ID</p>
-                          <p className="font-medium">{searchResult.patient.nationalId}</p>
+                          <p className="text-sm text-muted-foreground">
+                            National ID
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.nationalId}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Birth Certificate ID</p>
-                          <p className="font-medium">{searchResult.patient.birthCertificateId}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Birth Certificate ID
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.patient.birthCertificateId}
+                          </p>
                         </div>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-900">Healthcare Provider</h4>
+                      <h4 className="font-semibold text-gray-900">
+                        Healthcare Provider
+                      </h4>
                       <div className="space-y-2">
                         <div>
-                          <p className="text-sm text-muted-foreground">Provider Name</p>
-                          <p className="font-medium">{searchResult.vaccinator.name}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Email</p>
-                          <p className="font-medium">{searchResult.vaccinator.email}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-muted-foreground">Email Verified</p>
+                          <p className="text-sm text-muted-foreground">
+                            Provider Name
+                          </p>
                           <p className="font-medium">
-                            {searchResult.vaccinator.emailVerified ? "Yes" : "No"}
+                            {searchResult.vaccinator.name}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">Provider ID</p>
-                          <p className="font-medium">{searchResult.vaccinator.id}</p>
+                          <p className="text-sm text-muted-foreground">
+                            Email
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.vaccinator.email}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Email Verified
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.vaccinator.emailVerified
+                              ? "Yes"
+                              : "No"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Provider ID
+                          </p>
+                          <p className="font-medium">
+                            {searchResult.vaccinator.id}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -813,21 +962,25 @@ const PageVerify = () => {
               </Card>
 
               {/* Vaccination Record Information */}
-              <Card className="border-red-200 bg-red-50">
+              <Card className="border-black-200 bg-black-50">
                 <CardHeader>
-                  <CardTitle className="text-base text-red-900 flex items-center gap-2">
+                  <CardTitle className="text-base text-black-900 flex items-center gap-2">
                     <AlertCircle className="w-5 h-5" />
                     Important Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-red-800 space-y-2">
+                <CardContent className="text-sm text-black-800 space-y-2">
                   <p>
-                    • This vaccination record is official and can be used for verification purposes
+                    • This vaccination record is official and can be used for
+                    verification purposes
                   </p>
-                  <p>• Keep this information safe and accessible for future reference</p>
                   <p>
-                    • If you experience any adverse reactions, contact your healthcare provider
-                    immediately
+                    • Keep this information safe and accessible for future
+                    reference
+                  </p>
+                  <p>
+                    • If you experience any adverse reactions, contact your
+                    healthcare provider immediately
                   </p>
                   <p>
                     • Record created on:{" "}
@@ -845,7 +998,7 @@ const PageVerify = () => {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
-                  className="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white"
+                  className="w-full sm:w-auto bg-black-500 hover:bg-black-700 text-white"
                   size="lg"
                 >
                   <FileText className="w-4 h-4 mr-2" />
@@ -853,7 +1006,7 @@ const PageVerify = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto border-red-400 text-red-500 hover:bg-red-50"
+                  className="w-full sm:w-auto border-black-400 text-black-500 hover:bg-black-50"
                   size="lg"
                 >
                   <Phone className="w-4 h-4 mr-2" />
@@ -862,7 +1015,7 @@ const PageVerify = () => {
                 {searchResult.nextDueAt && (
                   <Button
                     variant="outline"
-                    className="w-full sm:w-auto border-red-400 text-red-500 hover:bg-red-50"
+                    className="w-full sm:w-auto border-black-400 text-black-500 hover:bg-black-50"
                     size="lg"
                   >
                     <Calendar className="w-4 h-4 mr-2" />

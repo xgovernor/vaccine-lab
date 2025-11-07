@@ -38,7 +38,7 @@ const mockVaccines = [
     siteExamples: "Deltoid muscle (upper arm), Anterolateral thigh (for infants)",
     minAgeMonths: 6,
     notes:
-      "Store at -80°C to -60°C. Once thawed, may be stored at 2°C to 8°C for up to 10 weeks. After dilution, use within 6 hours. Do not refreeze.",
+      "Store at -80°C to -60°C. Once thawed, may be stoblack at 2°C to 8°C for up to 10 weeks. After dilution, use within 6 hours. Do not refreeze.",
     approved: true,
     approvalDate: "2020-12-11",
   },
@@ -56,7 +56,7 @@ const mockVaccines = [
     siteExamples: "Deltoid muscle (upper arm)",
     minAgeMonths: 6,
     notes:
-      "Store at -50°C to -15°C. Once thawed, may be stored at 2°C to 8°C for up to 30 days. After first puncture, use within 6 hours.",
+      "Store at -50°C to -15°C. Once thawed, may be stoblack at 2°C to 8°C for up to 30 days. After first puncture, use within 6 hours.",
     approved: true,
     approvalDate: "2020-12-18",
   },
@@ -120,11 +120,11 @@ const PageVerify = () => {
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
           <div className="flex justify-center mb-4">
-            <div className="p-4 bg-red-100 rounded-full">
-              <Syringe className="w-12 h-12 text-red-600" />
+            <div className="p-4 bg-black-100 rounded-full">
+              <Syringe className="w-12 h-12 text-black-600" />
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-red-600 mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-black-600 mb-4">
             Verify Vaccine Information
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -134,20 +134,12 @@ const PageVerify = () => {
 
         <div className="max-w-4xl mx-auto space-y-6 md:space-y-8">
           {/* Search Form */}
-          <Card className="border-red-100">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl text-red-600">
-                <Search className="w-5 h-5" />
-                Search Vaccine
-              </CardTitle>
-              <CardDescription>
-                Enter the vaccine code (e.g., CVX-208, CVX-212) to view detailed information
-              </CardDescription>
-            </CardHeader>
+          <Card className="border-black-100">
+           
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="vaccineCode" className="flex items-center gap-2 text-base">
-                  <FlaskConical className="w-4 h-4 text-red-500" />
+                  <FlaskConical className="w-4 h-4 text-black-500" />
                   Vaccine Code (CVX Code)
                 </Label>
                 <div className="flex gap-3">
@@ -157,7 +149,7 @@ const PageVerify = () => {
                     placeholder="Enter vaccine code (e.g., CVX-208)"
                     value={vaccineCode}
                     onChange={(e) => setVaccineCode(e.target.value)}
-                    className="border-red-200 focus:border-red-400 text-lg"
+                    className="border-black-200 focus:border-black-400 text-lg"
                     onKeyPress={(e) => {
                       if (e.key === "Enter" && vaccineCode) {
                         handleSearch();
@@ -171,7 +163,7 @@ const PageVerify = () => {
                 <Button
                   onClick={handleSearch}
                   disabled={!vaccineCode || isSearching}
-                  className="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white"
+                  className="w-full sm:w-auto bg-black-500 hover:bg-black-700 text-black"
                   size="lg"
                 >
                   <Search className="w-4 h-4 mr-2" />
@@ -180,7 +172,7 @@ const PageVerify = () => {
                 <Button
                   onClick={handleReset}
                   variant="outline"
-                  className="w-full sm:w-auto border-red-400 text-red-500 hover:bg-red-50"
+                  className="w-full sm:w-auto border-black-400 text-black-500 hover:bg-black-50 "
                   size="lg"
                 >
                   Clear
@@ -195,7 +187,7 @@ const PageVerify = () => {
                     <Badge
                       key={vaccine.code}
                       variant="outline"
-                      className="cursor-pointer border-red-300 text-red-600 hover:bg-red-50"
+                      className="cursor-pointer border-black-300 text-black-600 hover:bg-black-50"
                       onClick={() => setVaccineCode(vaccine.code)}
                     >
                       {vaccine.code}
@@ -208,13 +200,13 @@ const PageVerify = () => {
 
           {/* Error Message */}
           {error && (
-            <Card className="border-red-300 bg-red-50">
+            <Card className="border-black-300 bg-black-50">
               <CardContent className="pt-6">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-black-600 shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-red-900">Vaccine Not Found</h3>
-                    <p className="text-sm text-red-700 mt-1">{error}</p>
+                    <h3 className="font-semibold text-black-900">Vaccine Not Found</h3>
+                    <p className="text-sm text-black-700 mt-1">{error}</p>
                   </div>
                 </div>
               </CardContent>
@@ -227,11 +219,11 @@ const PageVerify = () => {
               <Separator />
 
               {/* Vaccine Header */}
-              <Card className="border-red-100 bg-gradient-to-br from-red-50 to-white">
+              <Card className="border-black-100 bg-gradient-to-br from-black-50 to-white">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <CardTitle className="text-2xl text-red-600 mb-2">
+                      <CardTitle className="text-2xl text-black-600 mb-2">
                         {searchResult.name}
                       </CardTitle>
                       <CardDescription className="text-base">
@@ -249,9 +241,9 @@ const PageVerify = () => {
               </Card>
 
               {/* Basic Information */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <Syringe className="w-5 h-5" />
                     Vaccine Information
                   </CardTitle>
@@ -261,35 +253,35 @@ const PageVerify = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Building2 className="w-4 h-4 text-red-500" />
+                        <Building2 className="w-4 h-4 text-black-500" />
                         Manufacturer
                       </p>
                       <p className="font-medium text-base">{searchResult.manufacturer}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Target className="w-4 h-4 text-red-500" />
+                        <Target className="w-4 h-4 text-black-500" />
                         Antigen (Target Disease)
                       </p>
                       <p className="font-medium text-base">{searchResult.antigen}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Layers className="w-4 h-4 text-red-500" />
+                        <Layers className="w-4 h-4 text-black-500" />
                         Series Name
                       </p>
                       <p className="font-medium text-base">{searchResult.seriesName}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-red-500" />
+                        <Calendar className="w-4 h-4 text-black-500" />
                         Minimum Age
                       </p>
                       <p className="font-medium text-base">{searchResult.minAgeMonths} months</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-red-500" />
+                        <Shield className="w-4 h-4 text-black-500" />
                         Approval Date
                       </p>
                       <p className="font-medium text-base">
@@ -305,9 +297,9 @@ const PageVerify = () => {
               </Card>
 
               {/* Dosage Information */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <FlaskConical className="w-5 h-5" />
                     Dosage & Administration
                   </CardTitle>
@@ -329,7 +321,7 @@ const PageVerify = () => {
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Pill className="w-4 h-4 text-red-500" />
+                        <Pill className="w-4 h-4 text-black-500" />
                         Route of Administration
                       </p>
                       <p className="font-medium text-base">{searchResult.route}</p>
@@ -343,9 +335,9 @@ const PageVerify = () => {
               </Card>
 
               {/* Storage & Notes */}
-              <Card className="border-red-100">
+              <Card className="border-black-100">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg text-red-600">
+                  <CardTitle className="flex items-center gap-2 text-lg text-black-600">
                     <FileText className="w-5 h-5" />
                     Storage & Handling Instructions
                   </CardTitle>
@@ -356,14 +348,14 @@ const PageVerify = () => {
               </Card>
 
               {/* Important Notice */}
-              <Card className="border-red-200 bg-red-50">
+              <Card className="border-black-200 bg-black-50">
                 <CardHeader>
-                  <CardTitle className="text-base text-red-900 flex items-center gap-2">
+                  <CardTitle className="text-base text-black-900 flex items-center gap-2">
                     <AlertCircle className="w-5 h-5" />
                     Important Notice
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-red-800 space-y-2">
+                <CardContent className="text-sm text-black-800 space-y-2">
                   <p>
                     • This information is for reference purposes only and should not replace
                     professional medical advice
@@ -382,7 +374,7 @@ const PageVerify = () => {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
-                  className="w-full sm:w-auto bg-red-500 hover:bg-red-700 text-white"
+                  className="w-full sm:w-auto bg-black-500 hover:bg-black-700 text-white"
                   size="lg"
                 >
                   <FileText className="w-4 h-4 mr-2" />
@@ -390,7 +382,7 @@ const PageVerify = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto border-red-400 text-red-500 hover:bg-red-50"
+                  className="w-full sm:w-auto border-black-400 text-black-500 hover:bg-black-50"
                   size="lg"
                 >
                   Book Appointment
