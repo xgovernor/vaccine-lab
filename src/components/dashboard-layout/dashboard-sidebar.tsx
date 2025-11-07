@@ -10,12 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import {
-  Home,
-  LogOutIcon,
-  Settings,
-  Users,
-} from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { Logo } from "@/components/logo";
 import type { Route } from "../nav-main";
 import DashboardNavigation from "@/components/nav-main";
@@ -26,40 +21,13 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 
-
-const dashboardRoutes: Route[] = [
-  {
-    id: "home",
-    title: "Home",
-    icon: <Home className="size-4" />,
-    link: "#",
-  },
-  {
-    id: "customers",
-    title: "Customers",
-    icon: <Users className="size-4" />,
-    link: "#",
-  },
-  {
-    id: "settings",
-    title: "Settings",
-    icon: <Settings className="size-4" />,
-    link: "#",
-    subs: [
-      { title: "Users", link: "/users" },
-      { title: "Webhooks", link: "#" },
-      { title: "Custom Fields", link: "#" },
-    ],
-  },
-];
-
 const teams = [
   { id: "1", name: "Alpha Inc.", logo: Logo, plan: "Free" },
   { id: "2", name: "Beta Corp.", logo: Logo, plan: "Free" },
   { id: "3", name: "Gamma Tech", logo: Logo, plan: "Free" },
 ];
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ sidebarRoutes }: { sidebarRoutes: Route[] }) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const router = useRouter();
@@ -113,7 +81,7 @@ export default function DashboardSidebar() {
         </motion.div>
       </SidebarHeader>
       <SidebarContent className="gap-4 px-2 py-4">
-        <DashboardNavigation routes={dashboardRoutes} />
+        <DashboardNavigation routes={sidebarRoutes} />
       </SidebarContent>
       <SidebarFooter className="px-2">
         <TeamSwitcher teams={teams} />
