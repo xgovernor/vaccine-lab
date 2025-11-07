@@ -1,5 +1,14 @@
+import NewUserForm from "@/components/forms/new-user-form";
+
 const PageUserDetails = () => {
-    return <div>Create User Page</div>;
+
+    return (
+        <>
+            <div className="p4">
+                <NewUserForm />
+            </div>
+        </>
+    );
 }
 
 export default PageUserDetails;

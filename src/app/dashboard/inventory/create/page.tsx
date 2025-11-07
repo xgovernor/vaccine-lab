@@ -1,5 +1,11 @@
+import VaccineEntryForm from "@/components/vaccine-form";
+
 const PageCreateInventory = () => {
-    return <div>Create Inventory Page</div>;
+    return (
+        <div className='p-4'>
+            <VaccineEntryForm/>
+        </div>
+    );
 }
 
 export default PageCreateInventory;
