@@ -15,17 +15,17 @@ export const vaccination = pgTable("vaccinations", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 
-  vaccine_id: text("vaccine_id")
+  vaccineId: text("vaccine_id")
     .references(() => vaccine.id)
     .notNull(),
-  patient_id: text("patient_id")
+  patientId: text("patient_id")
     .references(() => patient.id)
     .notNull(),
-  facility_id: text("facility_id")
+  facilityId: text("facility_id")
     .references(() => facility.id)
     .notNull(),
   vaccination_date: date("vaccination_date").notNull(),
-  vaccinator_id: text("vaccinator_id")
+  vaccinatorId: text("vaccinator_id")
     .references(() => user.id)
     .notNull(),
   dose_number: serial("dose_number").notNull(),
