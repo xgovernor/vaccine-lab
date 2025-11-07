@@ -12,12 +12,22 @@ import {
   Loader2,
   Trash2Icon,
   XCircle,
+  XIcon, // <-- Added for clearing date
 } from "lucide-react";
-import { useMemo, useState } from "react";
-import { format } from "date-fns"; // A great library for formatting dates
-
+import { useState } from "react";
+import { format } from "date-fns";
+import {
+  ColumnDef,
+  ColumnFiltersState, // --- !! NEW !! ---
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel, // --- !! NEW !! ---
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // --- !! NEW !! ---
 import {
   Table,
   TableBody,
@@ -33,20 +43,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// --- 1. UPDATED DATA INTERFACE & MOCK DATA ---
-
+// --- 1. DATA INTERFACE & MOCK DATA ---
+// (Data ekhane same ache)
 interface Appointment {
   id: string;
   patientName: string;
   patientEmail: string;
   service: string;
   center: string;
-  dateTime: string; // Using ISO string for date
+  dateTime: string;
   status: "pending" | "confirmed" | "completed" | "canceled";
 }
-
 type AppointmentActionType = "reschedule" | "cancel" | "view";
-
 const appointmentsData: Appointment[] = [
   {
     id: "APP-001",
@@ -113,8 +121,9 @@ const appointmentsData: Appointment[] = [
   },
 ];
 
-// --- 2. UPDATED STATUS BADGE FUNCTION (WITH ICONS) ---
 
+// --- 2. STATUS BADGE FUNCTION ---
+// (Ei function-e kono change nai)
 function getStatusBadge(status: Appointment["status"]) {
   switch (status) {
     case "pending":
@@ -162,14 +171,13 @@ function getStatusBadge(status: Appointment["status"]) {
   }
 }
 
-// --- 3. THE NEW PAGINATION CONTROLS COMPONENT ---
-
+// --- 3. PAGINATION CONTROLS COMPONENT ---
+// (Ei component-e kono change nai)
 interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
-
 function PaginationControls({
   currentPage,
   totalPages,
@@ -232,17 +240,11 @@ export default function AppointmentTable() {
     type: AppointmentActionType;
   } | null>(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // --- !! NEW !! ---
+  // Filtering-er jonno state
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  // --- !! NEW !! ---
 
-  // Memoize paginated data
-  const { paginatedData, totalPages } = useMemo(() => {
-    const total = Math.ceil(appointmentsData.length / ITEMS_PER_PAGE);
-    const data = appointmentsData.slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE,
-    );
-    return { paginatedData: data, totalPages: total };
-  }, [currentPage]);
 
   const isActionPending = (
     action: AppointmentActionType,
@@ -258,153 +260,275 @@ export default function AppointmentTable() {
     actionType: AppointmentActionType,
   ) => {
     setPendingAction({ id: appointment.id, type: actionType });
-    // Simulate API call
     setTimeout(() => {
       setPendingAction(null);
       console.log(
         `Action "${actionType}" completed for appointment:`,
         appointment.id,
       );
-      // Here you would refetch data or update state
     }, 1000);
   };
 
-  const renderAppointmentRow = (appointment: Appointment) => {
-    const busy = isRowBusy(appointment.id);
-    const reschedulePending = isActionPending("reschedule", appointment.id);
-    const cancelPending = isActionPending("cancel", appointment.id);
-    const viewPending = isActionPending("view", appointment.id);
-
-    const canModify =
-      appointment.status === "pending" || appointment.status === "confirmed";
-
-    return (
-      <TableRow key={appointment.id} className="hover:bg-muted/50">
-        {/* Patient Cell */}
-        <TableCell className="h-10 px-4 font-medium">
-          <div>{appointment.patientName}</div>
+  const columns: ColumnDef<Appointment>[] = [
+    {
+      accessorKey: "patientName",
+      header: "Patient",
+      cell: ({ row }) => (
+        <div className="h-10 px-4 font-medium">
+          <div>{row.original.patientName}</div>
           <div className="text-xs font-normal text-muted-foreground">
-            {appointment.patientEmail}
+            {row.original.patientEmail}
           </div>
-        </TableCell>
-
-        {/* Service Cell */}
-        <TableCell className="h-10 px-4">
-          <div>{appointment.service}</div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "service",
+      header: "Service",
+      cell: ({ row }) => (
+        <div className="h-10 px-4">
+          <div>{row.original.service}</div>
           <div className="text-xs text-muted-foreground">
-            {appointment.center}
+            {row.original.center}
           </div>
-        </TableCell>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "dateTime",
+      header: "Date & Time",
+      cell: ({ row }) => (
+        <div className="h-10 px-4 text-sm text-muted-foreground">
+          {format(new Date(row.original.dateTime), "MMM dd, yyyy - p")}
+        </div>
+      ),
+      // --- !! NEW !! ---
+      // Date filter korar custom logic
+      filterFn: (row, columnId, filterValue) => {
+        const filterDateStr = filterValue as string;
+        if (!filterDateStr) return true; // Kono date select na korle
+        const rowDateStr = row.getValue(columnId) as string; // "2025-11-10T09:30:00.000Z"
+        // Shudhu "YYYY-MM-DD" ongsho-ta compare korbe
+        return rowDateStr.startsWith(filterDateStr);
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="h-10 px-4">{getStatusBadge(row.original.status)}</div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const appointment = row.original;
+        const busy = isRowBusy(appointment.id);
+        const reschedulePending = isActionPending("reschedule", appointment.id);
+        const cancelPending = isActionPending("cancel", appointment.id);
+        const viewPending = isActionPending("view", appointment.id);
+        const canModify =
+          appointment.status === "pending" ||
+          appointment.status === "confirmed";
 
-        {/* Date Cell */}
-        <TableCell className="h-10 px-4 text-sm text-muted-foreground">
-          {format(new Date(appointment.dateTime), "MMM dd, yyyy - p")}
-        </TableCell>
+        return (
+          <div className="h-10 px-4">
+            <TooltipProvider>
+              <div className="flex items-center gap-1">
+                {canModify && (
+                  <>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            handleAction(appointment, "reschedule")
+                          }
+                          disabled={busy}
+                        >
+                          {reschedulePending ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <CalendarDaysIcon className="size-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Reschedule</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:bg-destructive hover:text-white"
+                          onClick={() => handleAction(appointment, "cancel")}
+                          disabled={busy}
+                        >
+                          {cancelPending ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Trash2Icon className="size-4" />
+                          )}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Cancel Appointment</TooltipContent>
+                    </Tooltip>
+                  </>
+                )}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleAction(appointment, "view")}
+                      disabled={busy && !viewPending}
+                    >
+                      {viewPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <FileTextIcon className="size-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>View Details</TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
+          </div>
+        );
+      },
+    },
+  ];
 
-        {/* Status Cell */}
-        <TableCell className="h-10 px-4">
-          {getStatusBadge(appointment.status)}
-        </TableCell>
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: ITEMS_PER_PAGE,
+  });
 
-        {/* Actions Cell */}
-        <TableCell className="h-10 px-4">
-          <TooltipProvider>
-            <div className="flex items-center gap-1">
-              {canModify && (
-                <>
-                  {/* Reschedule Button */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => handleAction(appointment, "reschedule")}
-                        disabled={busy}
-                      >
-                        {reschedulePending ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <CalendarDaysIcon className="size-4" />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Reschedule</TooltipContent>
-                  </Tooltip>
+  const table = useReactTable({
+    data: appointmentsData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    // --- !! NEW !! ---
+    // Filtering setup
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    // --- !! NEW !! ---
+    state: {
+      pagination,
+      columnFilters, // --- !! NEW !! ---
+    },
+  });
 
-                  {/* Cancel Button */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:bg-destructive hover:text-white"
-                        onClick={() => handleAction(appointment, "cancel")}
-                        disabled={busy}
-                      >
-                        {cancelPending ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <Trash2Icon className="size-4" />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Cancel Appointment</TooltipContent>
-                  </Tooltip>
-                </>
-              )}
-
-              {/* View Details Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleAction(appointment, "view")}
-                    disabled={busy && !viewPending}
-                  >
-                    {viewPending ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <FileTextIcon className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>View Details</TooltipContent>
-              </Tooltip>
-            </div>
-          </TooltipProvider>
-        </TableCell>
-      </TableRow>
-    );
-  };
+  // --- !! NEW !! ---
+  // Helper variable for checking if date filter is active
+  const dateFilterValue = table.getColumn("dateTime")?.getFilterValue();
+  // --- !! NEW !! ---
 
   return (
     <div className="rounded-lg border bg-card w-full">
       <h3 className="p-4 text-lg font-semibold">Scheduled Appointments</h3>
+
+      {/* --- !! NEW !! --- */}
+      {/* Filtering Toolbar */}
+      <div className="flex items-center justify-between p-4">
+        {/* Search Input */}
+        <Input
+          placeholder="Search by patient name..."
+          value={
+            (table.getColumn("patientName")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("patientName")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        {/* Date Filter (No new package) */}
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            value={(dateFilterValue as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("dateTime")?.setFilterValue(event.target.value)
+            }
+            // shadcn/ui Input component-er moton style deyar jonno
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ colorScheme: "dark" }} // Dark mode-e calendar icon-ke shada rakhe
+          />
+          {!!dateFilterValue && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                table.getColumn("dateTime")?.setFilterValue(undefined)
+              }
+            >
+              <XIcon className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+      {/* --- !! NEW !! (Toolbar Shesh) --- */}
+
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-transparent border-b">
-            <TableHead className="h-10 px-3 font-medium">Patient</TableHead>
-            <TableHead className="h-10 px-3 font-medium">Service</TableHead>
-            <TableHead className="h-10 px-3 font-medium">Date & Time</TableHead>
-            <TableHead className="h-10 px-3 font-medium w-[120px]">
-              Status
-            </TableHead>
-            <TableHead className="h-10 px-3 font-medium w-[180px]">
-              Actions
-            </TableHead>
-          </TableRow>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="hover:bg-transparent border-b"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="h-10 px-3 font-medium">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
         </TableHeader>
-        <TableBody>{paginatedData.map(renderAppointmentRow)}</TableBody>
+
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className="hover:bg-muted/50"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
+                No appointments found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
       </Table>
-      
-      {/* --- 5. PAGINATION COMPONENT IN USE --- */}
+
       <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={(page) => table.setPageIndex(page - 1)}
       />
     </div>
   );

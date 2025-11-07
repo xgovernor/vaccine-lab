@@ -8,15 +8,25 @@ import {
   ChevronsRight,
   FileTextIcon,
   Loader2,
-  PackageX, // Using PackageX for 'Out of Stock'
+  PackageX,
   PencilIcon,
   Trash2Icon,
+  XIcon, // <-- Added for clearing date
 } from "lucide-react";
-import { useMemo, useState } from "react";
-import { format } from "date-fns"; // For formatting dates
-
+import { useState } from "react";
+import { format } from "date-fns";
+import {
+  ColumnDef,
+  ColumnFiltersState, // <-- Added
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel, // <-- Added
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table"; // <-- Updated imports
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input"; // <-- Added
 import {
   Table,
   TableBody,
@@ -32,7 +42,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// --- 1. UPDATED DATA INTERFACE & MOCK DATA ---
+// --- 1. DATA INTERFACE & MOCK DATA ---
 
 interface Vaccine {
   id: string;
@@ -46,6 +56,7 @@ interface Vaccine {
 type VaccineActionType = "edit" | "delete" | "view";
 
 const vaccineData: Vaccine[] = [
+  // ... (Apnar data ekhane)
   {
     id: "VAC-001",
     name: "Moderna (Spikevax)",
@@ -104,8 +115,8 @@ const vaccineData: Vaccine[] = [
   },
 ];
 
-// --- 2. UPDATED STATUS BADGE FUNCTION (WITH ICONS) ---
-
+// --- 2. STATUS BADGE FUNCTION ---
+// (No change)
 function getStatusBadge(status: Vaccine["status"]) {
   switch (status) {
     case "available":
@@ -133,14 +144,13 @@ function getStatusBadge(status: Vaccine["status"]) {
   }
 }
 
-// --- 3. THE NEW PAGINATION CONTROLS COMPONENT (Identical) ---
-
+// --- 3. PAGINATION CONTROLS COMPONENT ---
+// (No change)
 interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
-
 function PaginationControls({
   currentPage,
   totalPages,
@@ -203,17 +213,10 @@ export default function VaccineTable() {
     type: VaccineActionType;
   } | null>(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Memoize paginated data
-  const { paginatedData, totalPages } = useMemo(() => {
-    const total = Math.ceil(vaccineData.length / ITEMS_PER_PAGE);
-    const data = vaccineData.slice(
-      (currentPage - 1) * ITEMS_PER_PAGE,
-      currentPage * ITEMS_PER_PAGE,
-    );
-    return { paginatedData: data, totalPages: total };
-  }, [currentPage]);
+  // --- !! NEW !! ---
+  // Filtering state
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  // --- !! NEW !! ---
 
   const isActionPending = (action: VaccineActionType, vaccineId: string) =>
     pendingAction?.id === vaccineId && pendingAction.type === action;
@@ -222,140 +225,265 @@ export default function VaccineTable() {
 
   const handleAction = (vaccine: Vaccine, actionType: VaccineActionType) => {
     setPendingAction({ id: vaccine.id, type: actionType });
-    // Simulate API call
     setTimeout(() => {
       setPendingAction(null);
       console.log(`Action "${actionType}" completed for vaccine:`, vaccine.name);
-      // Here you would refetch data or update state
     }, 1000);
   };
 
-  const renderVaccineRow = (vaccine: Vaccine) => {
-    const busy = isRowBusy(vaccine.id);
-    const editPending = isActionPending("edit", vaccine.id);
-    const deletePending = isActionPending("delete", vaccine.id);
-    const viewPending = isActionPending("view", vaccine.id);
+  // --- !! UPDATED !! ---
+  // Columns definition for TanStack Table
+  const columns: ColumnDef<Vaccine>[] = [
+    {
+      accessorKey: "name",
 
-    return (
-      <TableRow key={vaccine.id} className="hover:bg-muted/50">
-        {/* Vaccine Cell */}
-        <TableCell className="h-10 px-4 font-medium">
-          <div>{vaccine.name}</div>
+      header: "Vaccine",//updated head
+      cell: ({ row }) => (
+        <div className="h-10 px-4 font-medium">
+          <div>{row.original.name}</div>
           <div className="text-xs font-normal text-muted-foreground">
-            Batch: {vaccine.batchNumber}
+            Batch: {row.original.batchNumber}
           </div>
-        </TableCell>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "expiryDate",
+      header: "Expiry Date",
+      cell: ({ row }) => (
+        <div className="h-10 px-4 text-sm text-muted-foreground">
+          {format(new Date(row.original.expiryDate), "MMM dd, yyyy")}
+        </div>
+      ),
+      // Custom date filter logic
+      filterFn: (row, columnId, filterValue) => {
+        const filterDateStr = filterValue as string;
+        if (!filterDateStr) return true;
+        const rowDateStr = row.getValue(columnId) as string;
+        return rowDateStr.startsWith(filterDateStr);
+      },
+    },
+    {
+      accessorKey: "quantity",
+      header: "Quantity",
+      cell: ({ row }) => (
+        <div className="h-10 px-4 text-sm text-muted-foreground">
+          {row.original.quantity.toLocaleString()} units
+        </div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="h-10 px-4">{getStatusBadge(row.original.status)}</div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const vaccine = row.original;
+        const busy = isRowBusy(vaccine.id);
+        const editPending = isActionPending("edit", vaccine.id);
+        const deletePending = isActionPending("delete", vaccine.id);
+        const viewPending = isActionPending("view", vaccine.id);
 
-        {/* Expiry Date Cell */}
-        <TableCell className="h-10 px-4 text-sm text-muted-foreground">
-          {format(new Date(vaccine.expiryDate), "MMM dd, yyyy")}
-        </TableCell>
+        return (
+          <div className="h-10 px-4">
+            <TooltipProvider>
+              <div className="flex items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleAction(vaccine, "edit")}
+                      disabled={busy}
+                    >
+                      {editPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <PencilIcon className="size-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Edit Stock</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:bg-destructive hover:text-white"
+                      onClick={() => handleAction(vaccine, "delete")}
+                      disabled={busy}
+                    >
+                      {deletePending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Trash2Icon className="size-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Delete Batch</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => handleAction(vaccine, "view")}
+                      disabled={busy && !viewPending}
+                    >
+                      {viewPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <FileTextIcon className="size-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>View Details</TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
+          </div>
+        );
+      },
+    },
+  ];
 
-        {/* Quantity Cell */}
-        <TableCell className="h-10 px-4 text-sm text-muted-foreground">
-          {vaccine.quantity.toLocaleString()} units
-        </TableCell>
+  // --- !! UPDATED !! ---
+  // Removed currentPage and useMemo
+  // Added pagination state for TanStack Table
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: ITEMS_PER_PAGE,
+  });
 
-        {/* Status Cell */}
-        <TableCell className="h-10 px-4">
-          {getStatusBadge(vaccine.status)}
-        </TableCell>
+  // --- !! UPDATED !! ---
+  // TanStack Table hook setup
+  const table = useReactTable({
+    data: vaccineData,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    // Filtering setup
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      pagination,
+      columnFilters,
+    },
+  });
 
-        {/* Actions Cell */}
-        <TableCell className="h-10 px-4">
-          <TooltipProvider>
-            <div className="flex items-center gap-1">
-              {/* Edit Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleAction(vaccine, "edit")}
-                    disabled={busy}
-                  >
-                    {editPending ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <PencilIcon className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Edit Stock</TooltipContent>
-              </Tooltip>
+  // Helper variable for date filter
+  const dateFilterValue = table.getColumn("expiryDate")?.getFilterValue();
 
-              {/* Delete Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 text-destructive hover:bg-destructive hover:text-white"
-                    onClick={() => handleAction(vaccine, "delete")}
-                    disabled={busy}
-                  >
-                    {deletePending ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Trash2Icon className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete Batch</TooltipContent>
-              </Tooltip>
-
-              {/* View Details Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleAction(vaccine, "view")}
-                    disabled={busy && !viewPending}
-                  >
-                    {viewPending ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <FileTextIcon className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>View Details</TooltipContent>
-              </Tooltip>
-            </div>
-          </TooltipProvider>
-        </TableCell>
-      </TableRow>
-    );
-  };
+  // --- !! REMOVED !! ---
+  // renderVaccineRow function is no longer needed
 
   return (
     <div className="rounded-lg border bg-card w-full">
       <h3 className="p-4 text-lg font-semibold">Vaccine Stock List</h3>
+
+      {/* --- !! NEW !! --- */}
+      {/* Filtering Toolbar */}
+      <div className="flex items-center justify-between p-4">
+        {/* Search Input */}
+        <Input
+          placeholder="Search by vaccine name..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+        {/* Date Filter (No new package) */}
+        <div className="flex items-center gap-2">
+          <input
+            type="date"
+            value={(dateFilterValue as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("expiryDate")?.setFilterValue(event.target.value)
+            }
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ colorScheme: "dark" }}
+          />
+          {!!dateFilterValue && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                table.getColumn("expiryDate")?.setFilterValue(undefined)
+              }
+            >
+              <XIcon className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+      {/* --- !! NEW !! (Toolbar Shesh) --- */}
+
       <Table>
+        {/* --- !! UPDATED !! --- */}
         <TableHeader>
-          <TableRow className="hover:bg-transparent border-b">
-            <TableHead className="h-10 px-3 font-medium">Vaccine</TableHead>
-            <TableHead className="h-10 px-3 font-medium">Expiry Date</TableHead>
-            <TableHead className="h-10 px-3 font-medium">Quantity</TableHead>
-            <TableHead className="h-10 px-3 font-medium w-[120px]">
-              Status
-            </TableHead>
-            <TableHead className="h-10 px-3 font-medium w-[180px]">
-              Actions
-            </TableHead>
-          </TableRow>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              className="hover:bg-transparent border-b"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="h-10 px-3 font-medium">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
         </TableHeader>
-        <TableBody>{paginatedData.map(renderVaccineRow)}</TableBody>
+
+        {/* --- !! UPDATED !! --- */}
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className="hover:bg-muted/50"
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+              >
+                No vaccines found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
       </Table>
 
-      {/* --- 5. PAGINATION COMPONENT IN USE --- */}
+      {/* --- !! UPDATED !! --- */}
       <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
+        currentPage={table.getState().pagination.pageIndex + 1}
+        totalPages={table.getPageCount()}
+        onPageChange={(page) => table.setPageIndex(page - 1)}
       />
     </div>
   );
