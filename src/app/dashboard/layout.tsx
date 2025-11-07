@@ -15,30 +15,30 @@ const PageDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children
             id: "appointment",
             title: "Appointment",
             icon: <UsersIcon className="size-4" />,
-            link: "/appointment",
+            link: "/dashboard/appointment",
             subs: [
-                { title: "All Appointments", link: "/appointment" },
-                { title: "Schedule Appointment", link: "/appointment/schedule" },
+                { title: "All Appointments", link: "/dashboard/appointment" },
+                { title: "Schedule Appointment", link: "/dashboard/appointment/schedule" },
             ],
         },
         {
             id: "users",
             title: "Stuff",
             icon: <UsersIcon className="size-4" />,
-            link: "/users",
+            link: "/dashboard/users",
             subs: [
-                { title: "All Stuff", link: "/users" },
-                { title: "Add New Stuff", link: "/users/add" },
+                { title: "All Stuff", link: "/dashboard/users" },
+                { title: "Add New Stuff", link: "/dashboard/users/add" },
             ],
         },
         {
             id: "inventory",
             title: "Inventory",
             icon: <UsersIcon className="size-4" />,
-            link: "/inventory",
+            link: "/dashboard/inventory",
             subs: [
-                { title: "Inventory", link: "/inventory" },
-                { title: "Add Item", link: "/inventory/add" },
+                { title: "Inventory", link: "/dashboard/inventory" },
+                { title: "Add Item", link: "/dashboard/inventory/add" },
             ],
         },
         {
@@ -47,8 +47,8 @@ const PageDashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children
             icon: <UsersIcon className="size-4" />,
             link: "#",
             subs: [
-                { title: "Analytics", link: "/analytics" },
-                { title: "Reports", link: "/reports" },
+                { title: "Analytics", link: "/dashboard/analytics" },
+                { title: "Reports", link: "/dashboard/reports" },
             ],
         },
     ];
