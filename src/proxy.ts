@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { AUTH_DEFAULT_REDIRECT_URL, AUTH_LOGIN_PAGE_URL } from "@/config";
-
-const AUTH_URLS = [AUTH_LOGIN_PAGE_URL, "/auth/register"];
+import { AUTH_DEFAULT_REDIRECT_URL, AUTH_LOGIN_PAGE_URL, AUTH_URLS } from "@/config";
 
 export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
@@ -16,7 +14,7 @@ export async function proxy(request: NextRequest) {
   console.log("Middleware - Request Pathname:", pathname);
 
   // Redirect authenticated users away from login page
-  if (session && pathname === AUTH_LOGIN_PAGE_URL) {
+  if (session && AUTH_URLS.includes(pathname)) {
     const url = new URL(callbackUrl, request.url);
     console.log("Redirecting authenticated user to:", url.toString());
     return NextResponse.redirect(url);
@@ -35,10 +33,9 @@ export async function proxy(request: NextRequest) {
 
 // Read more: https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
 export const config = {
-  runtime: "nodejs",
   matcher: [
     "/dashboard/:path*",
-    "/login/:path*",
+    "/auth/:path*",
     //   // matcher: [
     //   //   // Skip Next.js internals and all static files, unless found in search params
     // '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',

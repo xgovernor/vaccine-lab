@@ -17,4 +17,6 @@ export const AUTH_DEFAULT_REDIRECT_URL = `/dashboard`
 /**
  * Redirect URL for anonymous users who tried to access protected routes
  */
-export const AUTH_LOGIN_PAGE_URL = `${APP_URL}/auth/login`
+export const AUTH_LOGIN_PAGE_URL = `/auth/login`;
+
+export const AUTH_URLS = ["/auth/login", "/auth/register"];
