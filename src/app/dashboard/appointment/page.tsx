@@ -1,5 +1,11 @@
+import AppointmentTable from "@/components/appointment-list-table";
+
 const PageVerify = () => {
-    return <div>Appointment List Table Page</div>;
+    return (
+        <div className="p-4">
+            <AppointmentTable/>
+        </div>
+    );
 }
 
 export default PageVerify;
