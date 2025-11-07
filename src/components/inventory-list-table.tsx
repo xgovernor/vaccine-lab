@@ -1,20 +1,17 @@
 "use client";
 
 import {
-  CheckCircle,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   FileTextIcon,
   Loader2,
-  PackageX,
   PencilIcon,
   Trash2Icon,
-  XIcon, // <-- Added for clearing date
+  XIcon, // <-- Added for clearing filters
 } from "lucide-react";
 import { useState } from "react";
-import { format } from "date-fns";
 import {
   ColumnDef,
   ColumnFiltersState, // <-- Added
@@ -46,101 +43,152 @@ import {
 
 interface Vaccine {
   id: string;
+  createdAt: Date;
+  createdBy: string;
+  updatedAt: Date;
+  code: string | null;
   name: string;
-  batchNumber: string;
-  expiryDate: string; // Using ISO string for date
-  quantity: number;
-  status: "available" | "out-of-stock";
+  manufacturer: string | null;
+  antigen: string | null;
+  series_name: string | null;
+  dose_count: number;
+  dose_volume: string | null;
+  dose_unit: string | null;
+  route: string | null;
+  site_examples: string | null;
+  min_age_months: number;
+  notes: string | null;
 }
 
 type VaccineActionType = "edit" | "delete" | "view";
 
 const vaccineData: Vaccine[] = [
-  // ... (Apnar data ekhane)
   {
     id: "VAC-001",
-    name: "Moderna (Spikevax)",
-    batchNumber: "MDRN-B-112A",
-    expiryDate: "2026-10-31T00:00:00.000Z",
-    quantity: 500,
-    status: "available",
+    createdAt: new Date(),
+    createdBy: "user-1",
+    updatedAt: new Date(),
+    code: "CVX-207",
+    name: "COVID-19 (Moderna)",
+    manufacturer: "Moderna",
+    antigen: "SARS-CoV-2",
+    series_name: "Primary series",
+    dose_count: 2,
+    dose_volume: "0.5",
+    dose_unit: "ml",
+    route: "IM",
+    site_examples: "Deltoid",
+    min_age_months: 216, // 18 years
+    notes: "mRNA vaccine",
   },
   {
     id: "VAC-002",
-    name: "Pfizer (Comirnaty)",
-    batchNumber: "PFIZ-C-987B",
-    expiryDate: "2026-12-31T00:00:00.000Z",
-    quantity: 1200,
-    status: "available",
+    createdAt: new Date(),
+    createdBy: "user-1",
+    updatedAt: new Date(),
+    code: "CVX-208",
+    name: "COVID-19 (Pfizer)",
+    manufacturer: "Pfizer-BioNTech",
+    antigen: "SARS-CoV-2",
+    series_name: "Primary series",
+    dose_count: 2,
+    dose_volume: "0.3",
+    dose_unit: "ml",
+    route: "IM",
+    site_examples: "Deltoid",
+    min_age_months: 72, // 6 months
+    notes: "mRNA vaccine",
   },
   {
     id: "VAC-003",
-    name: "Sinopharm (BBIBP)",
-    batchNumber: "SINO-A-45C",
-    expiryDate: "2025-09-15T00:00:00.000Z",
-    quantity: 0,
-    status: "out-of-stock",
+    createdAt: new Date(),
+    createdBy: "user-1",
+    updatedAt: new Date(),
+    code: "CVX-03",
+    name: "MMR (Measles, Mumps, Rubella)",
+    manufacturer: "Merck",
+    antigen: "Measles, Mumps, Rubella",
+    series_name: "Primary series",
+    dose_count: 2,
+    dose_volume: "0.5",
+    dose_unit: "ml",
+    route: "SC",
+    site_examples: "Upper arm",
+    min_age_months: 12,
+    notes: "Live attenuated vaccine",
   },
   {
     id: "VAC-004",
-    name: "AstraZeneca (Vaxzevria)",
-    batchNumber: "AZ-V-77D",
-    expiryDate: "2026-08-30T00:00:00.000Z",
-    quantity: 350,
-    status: "available",
+    createdAt: new Date(),
+    createdBy: "user-1",
+    updatedAt: new Date(),
+    code: "CVX-21",
+    name: "Varicella (Chickenpox)",
+    manufacturer: "Merck",
+    antigen: "Varicella-zoster",
+    series_name: "Primary series",
+    dose_count: 2,
+    dose_volume: "0.5",
+    dose_unit: "ml",
+    route: "SC",
+    site_examples: "Upper arm",
+    min_age_months: 12,
+    notes: "Live attenuated vaccine",
   },
   {
     id: "VAC-005",
-    name: "Johnson & Johnson",
-    batchNumber: "JNJ-B-101E",
-    expiryDate: "2026-11-20T00:00:00.000Z",
-    quantity: 80,
-    status: "available",
-  },
-  {
-    id: "VAC-006",
-    name: "Sinovac (CoronaVac)",
-    batchNumber: "SINO-V-55F",
-    expiryDate: "2025-10-10T00:00:00.000Z",
-    quantity: 0,
-    status: "out-of-stock",
-  },
-  {
-    id: "VAC-007",
-    name: "Moderna (Spikevax)",
-    batchNumber: "MDRN-B-113A",
-    expiryDate: "2026-11-30T00:00:00.000Z",
-    quantity: 240,
-    status: "available",
+    createdAt: new Date(),
+    createdBy: "user-1",
+    updatedAt: new Date(),
+    code: "CVX-20",
+    name: "DTaP (Diphtheria, Tetanus, Pertussis)",
+    manufacturer: "Sanofi Pasteur",
+    antigen: "Diphtheria, Tetanus, Pertussis",
+    series_name: "Primary series",
+    dose_count: 5,
+    dose_volume: "0.5",
+    dose_unit: "ml",
+    route: "IM",
+    site_examples: "Anterolateral thigh, deltoid",
+    min_age_months: 2,
+    notes: "Inactivated vaccine",
   },
 ];
 
-// --- 2. STATUS BADGE FUNCTION ---
-// (No change)
-function getStatusBadge(status: Vaccine["status"]) {
-  switch (status) {
-    case "available":
+// --- 2. ROUTE BADGE FUNCTION ---
+function getRouteBadge(route: string | null) {
+  if (!route) return <Badge variant="secondary">N/A</Badge>;
+
+  switch (route.toUpperCase()) {
+    case "IM":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-blue-500/15 text-blue-700 hover:bg-blue-500/25 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20 border-0"
+        >
+          Intramuscular
+        </Badge>
+      );
+    case "SC":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-purple-500/15 text-purple-700 hover:bg-purple-500/25 dark:bg-purple-500/10 dark:text-purple-400 dark:hover:bg-purple-500/20 border-0"
+        >
+          Subcutaneous
+        </Badge>
+      );
+    case "PO":
       return (
         <Badge
           variant="outline"
           className="bg-green-500/15 text-green-700 hover:bg-green-500/25 dark:bg-green-500/10 dark:text-green-400 dark:hover:bg-green-500/20 border-0"
         >
-          <CheckCircle className="mr-1 h-3.5 w-3.5" />
-          Available
-        </Badge>
-      );
-    case "out-of-stock":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-rose-500/15 text-rose-700 hover:bg-rose-500/25 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/20 border-0"
-        >
-          <PackageX className="mr-1 h-3.5 w-3.5" />
-          Out of Stock
+          Oral
         </Badge>
       );
     default:
-      return <Badge variant="secondary">{status}</Badge>;
+      return <Badge variant="secondary">{route}</Badge>;
   }
 }
 
@@ -207,7 +255,7 @@ function PaginationControls({
 
 const ITEMS_PER_PAGE = 5;
 
-export default function VaccineTable() {
+export default function VaccineTable({ data }: { data: Vaccine[] }) {
   const [pendingAction, setPendingAction] = useState<{
     id: string;
     type: VaccineActionType;
@@ -236,47 +284,53 @@ export default function VaccineTable() {
   const columns: ColumnDef<Vaccine>[] = [
     {
       accessorKey: "name",
-
-      header: "Vaccine",//updated head
+      header: "Vaccine",
       cell: ({ row }) => (
         <div className="h-10 px-4 font-medium">
           <div>{row.original.name}</div>
           <div className="text-xs font-normal text-muted-foreground">
-            Batch: {row.original.batchNumber}
+            Code: {row.original.code || "N/A"}
           </div>
         </div>
       ),
     },
     {
-      accessorKey: "expiryDate",
-      header: "Expiry Date",
+      accessorKey: "manufacturer",
+      header: "Manufacturer",
       cell: ({ row }) => (
         <div className="h-10 px-4 text-sm text-muted-foreground">
-          {format(new Date(row.original.expiryDate), "MMM dd, yyyy")}
-        </div>
-      ),
-      // Custom date filter logic
-      filterFn: (row, columnId, filterValue) => {
-        const filterDateStr = filterValue as string;
-        if (!filterDateStr) return true;
-        const rowDateStr = row.getValue(columnId) as string;
-        return rowDateStr.startsWith(filterDateStr);
-      },
-    },
-    {
-      accessorKey: "quantity",
-      header: "Quantity",
-      cell: ({ row }) => (
-        <div className="h-10 px-4 text-sm text-muted-foreground">
-          {row.original.quantity.toLocaleString()} units
+          {row.original.manufacturer || "N/A"}
         </div>
       ),
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "antigen",
+      header: "Antigen",
       cell: ({ row }) => (
-        <div className="h-10 px-4">{getStatusBadge(row.original.status)}</div>
+        <div className="h-10 px-4 text-sm text-muted-foreground">
+          {row.original.antigen || "N/A"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "dose_count",
+      header: "Doses",
+      cell: ({ row }) => (
+        <div className="h-10 px-4 text-sm text-muted-foreground">
+          {row.original.dose_count} dose{row.original.dose_count !== 1 ? "s" : ""}
+          {row.original.dose_volume && (
+            <div className="text-xs">
+              ({row.original.dose_volume} {row.original.dose_unit})
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "route",
+      header: "Route",
+      cell: ({ row }) => (
+        <div className="h-10 px-4">{getRouteBadge(row.original.route)}</div>
       ),
     },
     {
@@ -366,7 +420,7 @@ export default function VaccineTable() {
   // --- !! UPDATED !! ---
   // TanStack Table hook setup
   const table = useReactTable({
-    data: vaccineData,
+    data: data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -380,9 +434,6 @@ export default function VaccineTable() {
     },
   });
 
-  // Helper variable for date filter
-  const dateFilterValue = table.getColumn("expiryDate")?.getFilterValue();
-
   // --- !! REMOVED !! ---
   // renderVaccineRow function is no longer needed
 
@@ -392,7 +443,7 @@ export default function VaccineTable() {
 
       {/* --- !! NEW !! --- */}
       {/* Filtering Toolbar */}
-      <div className="flex items-center justify-between p-4">
+      <div className="flex items-center justify-between gap-4 p-4">
         {/* Search Input */}
         <Input
           placeholder="Search by vaccine name..."
@@ -402,29 +453,26 @@ export default function VaccineTable() {
           }
           className="max-w-sm"
         />
-        {/* Date Filter (No new package) */}
-        <div className="flex items-center gap-2">
-          <input
-            type="date"
-            value={(dateFilterValue as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("expiryDate")?.setFilterValue(event.target.value)
-            }
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ colorScheme: "dark" }}
-          />
-          {!!dateFilterValue && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                table.getColumn("expiryDate")?.setFilterValue(undefined)
-              }
-            >
-              <XIcon className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        {/* Manufacturer Filter */}
+        <Input
+          placeholder="Filter by manufacturer..."
+          value={(table.getColumn("manufacturer")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("manufacturer")?.setFilterValue(event.target.value)
+          }
+          className="max-w-xs"
+        />
+        {/* Clear Filters Button */}
+        {columnFilters.length > 0 && (
+          <Button
+            variant="ghost"
+            onClick={() => table.resetColumnFilters()}
+            className="h-10 px-4"
+          >
+            <XIcon className="mr-2 h-4 w-4" />
+            Clear Filters
+          </Button>
+        )}
       </div>
       {/* --- !! NEW !! (Toolbar Shesh) --- */}
 

@@ -1,9 +1,11 @@
 "use server";
 
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { headers } from "next/headers";
+import { vaccine } from "../../../db/schema";
 
-export async function getUserList({
+export async function getVaccineList({
   limit = 10,
   offset = 0,
   sortBy = "createdAt",
@@ -15,31 +17,35 @@ export async function getUserList({
   sortDirection?: "desc";
 }) {
   try {
-    const data = await auth.api.listUsers({
-      query: { limit, offset, sortBy, sortDirection },
-      // This endpoint requires session cookies.
-      headers: await headers(),
-    });
+    const data = await db
+      .select({
+        id: vaccine.id,
+        name: vaccine.name,
+        batchNumber: vaccine.code,
+        expiryDate: vaccine.updatedAt,
+        doseCount: vaccine.dose_count,
+        manufacturer: vaccine.manufacturer,
+      })
+      .from(vaccine);
 
     if (!data) {
       return {
-        error: "Failed to create account",
+        error: "Failed to fetch vaccine list",
         user: null,
       };
     }
 
     return {
       error: null,
-      users: data.users,
-      total: data.total,
+      data,
+      total: data.length,
       limit: limit,
       offset: offset,
     };
   } catch (error) {
-    console.error("Sign up error:", error);
     return {
-      error: error instanceof Error ? error.message : "Failed to sign up",
-      users: null,
+      error: error instanceof Error ? error.message : "Failed to fetch vaccine list",
+      data: null,
     };
   }
 }
