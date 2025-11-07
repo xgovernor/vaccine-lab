@@ -70,83 +70,89 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
   const appointment = getAppointmentData(params.id);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Appointment Details</h1>
-          <p className="text-muted-foreground">Appointment ID: {appointment.id}</p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
+            Appointment Details
+          </h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-all">
+            Appointment ID: {appointment.id}
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Download className="w-4 h-4 mr-2" />
-            Export
+        <div className="flex gap-2 shrink-0">
+          <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+            <Download className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Export</span>
           </Button>
-          <Button variant="outline" size="sm">
-            <Edit className="w-4 h-4 mr-2" />
-            Edit
+          <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+            <Edit className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Edit</span>
           </Button>
-          <Button variant="destructive" size="sm">
-            <Trash2 className="w-4 h-4 mr-2" />
-            Cancel
+          <Button variant="destructive" size="sm" className="flex-1 sm:flex-none">
+            <Trash2 className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Cancel</span>
           </Button>
         </div>
       </div>
 
       <Separator />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
           {/* Patient Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <User className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 Patient Information
               </CardTitle>
-              <CardDescription>Personal details of the patient</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
+                Personal details of the patient
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Full Name</p>
-                  <p className="font-medium">{appointment.patientName}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Full Name</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.patientName}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Date of Birth</p>
-                  <p className="font-medium">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Date of Birth</p>
+                  <p className="font-medium text-sm sm:text-base">
                     {new Date(appointment.dateOfBirth).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="font-medium flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-xs sm:text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium text-sm sm:text-base flex items-center gap-2 break-all">
+                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground shrink-0" />
                     {appointment.email}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <p className="font-medium flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-xs sm:text-sm text-muted-foreground">Phone</p>
+                  <p className="font-medium text-sm sm:text-base flex items-center gap-2">
+                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground shrink-0" />
                     {appointment.phone}
                   </p>
                 </div>
-                <div className="space-y-1 md:col-span-2">
-                  <p className="text-sm text-muted-foreground">Address</p>
-                  <p className="font-medium flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                    {appointment.address}
+                <div className="space-y-1 sm:col-span-2">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Address</p>
+                  <p className="font-medium text-sm sm:text-base flex items-start gap-2">
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground shrink-0 mt-0.5" />
+                    <span>{appointment.address}</span>
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Health Card Number</p>
-                  <p className="font-medium">{appointment.healthCardNumber}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Health Card Number</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.healthCardNumber}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Emergency Contact</p>
-                  <p className="font-medium">{appointment.emergencyContact}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Emergency Contact</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.emergencyContact}</p>
                 </div>
               </div>
             </CardContent>
@@ -155,25 +161,27 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
           {/* Vaccination Details */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Syringe className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Syringe className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 Vaccination Details
               </CardTitle>
-              <CardDescription>Information about the vaccine and administration</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
+                Information about the vaccine and administration
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Vaccine</p>
-                  <p className="font-medium">{appointment.vaccine}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Vaccine</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.vaccine}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Dose Number</p>
-                  <p className="font-medium">{appointment.doseNumber}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Dose Number</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.doseNumber}</p>
                 </div>
-                <div className="space-y-1 md:col-span-2">
-                  <p className="text-sm text-muted-foreground">Vaccination Site</p>
-                  <p className="font-medium">{appointment.vaccinationSite}</p>
+                <div className="space-y-1 sm:col-span-2">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Vaccination Site</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.vaccinationSite}</p>
                 </div>
               </div>
             </CardContent>
@@ -182,23 +190,23 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
           {/* Additional Notes */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                 Additional Notes
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm">{appointment.notes}</p>
+              <p className="text-xs sm:text-sm leading-relaxed">{appointment.notes}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           {/* Status Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Status</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Status</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex justify-center">{getStatusBadge(appointment.status)}</div>
@@ -208,17 +216,19 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
           {/* Appointment Schedule */}
           <Card>
             <CardHeader>
-              <CardTitle>Schedule</CardTitle>
-              <CardDescription>Appointment date and time</CardDescription>
+              <CardTitle className="text-base sm:text-lg">Schedule</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
+                Appointment date and time
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Calendar className="w-5 h-5 text-primary" />
+                <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                  <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="font-medium">
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Date</p>
+                  <p className="font-medium text-sm sm:text-base">
                     {new Date(appointment.appointmentDate).toLocaleDateString("en-US", {
                       weekday: "long",
                       year: "numeric",
@@ -230,12 +240,12 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
               </div>
               <Separator />
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Clock className="w-5 h-5 text-primary" />
+                <div className="p-2 bg-primary/10 rounded-lg shrink-0">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Time</p>
-                  <p className="font-medium">{appointment.appointmentTime}</p>
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Time</p>
+                  <p className="font-medium text-sm sm:text-base">{appointment.appointmentTime}</p>
                 </div>
               </div>
             </CardContent>
@@ -244,19 +254,19 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
           {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full" variant="outline">
+              <Button className="w-full text-sm" variant="outline">
                 Send Reminder
               </Button>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full text-sm" variant="outline">
                 Reschedule
               </Button>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full text-sm" variant="outline">
                 Mark as Completed
               </Button>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full text-sm" variant="outline">
                 Print Details
               </Button>
             </CardContent>
@@ -265,9 +275,9 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
           {/* Metadata */}
           <Card>
             <CardHeader>
-              <CardTitle>Metadata</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Metadata</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
+            <CardContent className="space-y-2 text-xs sm:text-sm">
               <div>
                 <p className="text-muted-foreground">Created On</p>
                 <p className="font-medium">
@@ -280,9 +290,11 @@ const PageAppointmentDetails = ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* Back Button */}
-      <div className="flex justify-start pt-4">
+      <div className="flex justify-start pt-2 md:pt-4">
         <Link href="/dashboard/appointment">
-          <Button variant="ghost">← Back to Appointments</Button>
+          <Button variant="ghost" size="sm" className="text-sm">
+            ← Back to Appointments
+          </Button>
         </Link>
       </div>
     </div>
