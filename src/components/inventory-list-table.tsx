@@ -38,6 +38,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 // --- 1. DATA INTERFACE & MOCK DATA ---
 
@@ -287,7 +288,7 @@ export default function VaccineTable({ data }: { data: Vaccine[] }) {
       header: "Vaccine",
       cell: ({ row }) => (
         <div className="h-10 px-4 font-medium">
-          <div>{row.original.name}</div>
+          <div><Link href={`/dashboard/inventory/${row.original.id}`}>{row.original.name}</Link></div>
           <div className="text-xs font-normal text-muted-foreground">
             Code: {row.original.code || "N/A"}
           </div>
